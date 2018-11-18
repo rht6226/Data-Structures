@@ -1,37 +1,34 @@
 # include <stdio.h>
 # include <stdlib.h>
+# define max 100
 
-struct node 
-{
-	int data;
-	struct node *next;
-};
-
-typedef struct node node;
-
-node *front = NULL, *rear = NULL;
+int queue[max];
+int front = -1, rear = -1;
 
 int isEmpty()
 {
-	if(front == NULL)
+	if (front == -1 || front == rear+1)
 		return 1;
-	else
-		return 0;
+	return 0;
+}
+
+int isFull()
+{
+	if(rear == max-1)
+		return 1;
+	return 0;
 }
 
 void enqueue(int data)
 {
-	node *tmp = (node *) malloc(sizeof(node));
-	tmp->data = data;
-	tmp->next = NULL;
-	if(front == NULL)
+	if(isFull())
 	{
-		front = tmp;
-		rear = tmp;
+		printf("\n Overflow \n");
 		return;
 	}
-	rear->next = tmp;
-	rear = tmp;
+	if(front == -1)
+		front = 0;
+	queue[++rear] = data;
 	return;
 }
 
@@ -39,28 +36,24 @@ int dequeue()
 {
 	if(isEmpty())
 	{
-		printf("\n Underflow");
+		printf("\n Underflow \n");
 		exit(1);
 	}
-	int data;
-	node *tmp = front;
-	data = tmp->data;
-	front = tmp->next;
-	free(tmp);
+	int data = queue[front++];
 	return data;
 }
 
 void display()
 {
-	node *p = front;
-	system("clear");
-	printf("\n The queue is as follows : \n");
-	while(p != NULL)
+	int i = front;
+	if(isEmpty())
 	{
-		printf(" %d, ",p->data);
-		p = p->next;
+		printf("\n The queue is empty \n");
+		return;
 	}
-	printf("\n");
+	printf("\n The queue is : \n");
+	while(i<= rear)
+		printf(" %d, ", queue[i++]);
 	return;
 }
 
@@ -68,10 +61,10 @@ int peek()
 {
 	if(isEmpty())
 	{
-		printf("\n Underflow");
+		printf("\n Underflow \n");
 		exit(1);
 	}
-	return front->data;
+	return queue[front];
 }
 
 int main()

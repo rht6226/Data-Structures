@@ -1,53 +1,65 @@
 # include <stdio.h>
 # include <stdlib.h>
 
-struct node 
+struct node
 {
+	int priority;
 	int data;
 	struct node *next;
-};
+}*front = NULL;
 
 typedef struct node node;
-
-node *front = NULL, *rear = NULL;
 
 int isEmpty()
 {
 	if(front == NULL)
 		return 1;
-	else
-		return 0;
+	return 0;
 }
 
-void enqueue(int data)
+void insert(int data, int priority)
 {
-	node *tmp = (node *) malloc(sizeof(node));
+	node *tmp = (node *) malloc(sizeof(tmp));
 	tmp->data = data;
-	tmp->next = NULL;
-	if(front == NULL)
+	tmp->priority = priority;
+
+	if(isEmpty() || priority < front->priority)
 	{
+		tmp->next = front;
 		front = tmp;
-		rear = tmp;
 		return;
 	}
-	rear->next = tmp;
-	rear = tmp;
+
+	node *p = front;
+	while(p->next != NULL && p->next->priority <= priority)
+		p = p->next;
+	tmp->next = p->next;
+	p->next = tmp;
 	return;
 }
 
-int dequeue()
+int delete()
 {
 	if(isEmpty())
 	{
-		printf("\n Underflow");
+		printf("\n Underflow \n");
 		exit(1);
 	}
-	int data;
 	node *tmp = front;
-	data = tmp->data;
+	int data = tmp->data;
 	front = tmp->next;
 	free(tmp);
 	return data;
+}
+
+int peek()
+{
+	if(isEmpty())
+	{
+		printf("\n Underflow \n");
+		exit(1);
+	}
+	return front->data;
 }
 
 void display()
@@ -55,29 +67,20 @@ void display()
 	node *p = front;
 	system("clear");
 	printf("\n The queue is as follows : \n");
+	printf("Item \t priority\n");
 	while(p != NULL)
 	{
-		printf(" %d, ",p->data);
+		printf(" %5d \t %5d\n",p->data,p->priority);
 		p = p->next;
 	}
 	printf("\n");
 	return;
 }
 
-int peek()
-{
-	if(isEmpty())
-	{
-		printf("\n Underflow");
-		exit(1);
-	}
-	return front->data;
-}
-
 int main()
 {
 	system("clear");
-	int choice, data;
+	int choice, data, priority;
 	while(1)
 	{
 		printf("\n 1. Insert element\n 2. Delete element\n 3. Peek\n 4. Show queue \n 5. Exit\n");
@@ -87,12 +90,14 @@ int main()
 		switch(choice)
 		{
 			case 1:
-				printf("\n Enter the data to be inserted to the queue : ");
+				printf(" Enter the data to be inserted to the queue : ");
 				scanf("%d", &data);
-				enqueue(data);
+				printf(" Enter the priority of the node : ");
+				scanf("%d", &priority);
+				insert(data,priority);
 				break;
 			case 2:
-				data = dequeue();
+				data = delete();
 				printf("\n The deleted data is : %d\n", data);
 				break;
 			case 3:
@@ -108,4 +113,5 @@ int main()
 				printf("\n Enter a valid choice \n");
 		}
 	}
+	return 0;
 }
