@@ -1,57 +1,67 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <math.h>
+# define MAX 50
 
-struct node
+long int stack[MAX];
+int top = -1;
+char infix[MAX], postfix[MAX];
+
+void push(long int symbol)
 {
-	char data;
-	struct node *next;
-} *top = NULL;
-
-typedef struct node node;
-
-char infix[100], postfix[100];
-
-void push(char value)
-{
-	node *tmp = (node *) malloc(sizeof(node));
-	tmp->data = value;
-	tmp->next = top;
-	top = tmp;
-	return;
-}
-
-char pop()
-{
-	char data;
-	node *tmp = top;
-	data = tmp->data;
-	top = tmp->next;
-	free(tmp);
-	return data;
-}
-
-int p(char c)
-{
-	switch(c)
+	if(top > MAX)
 	{
-		case '^':
-			return 3;
-		case '%':
-		case '/':
-		case '*':
-			return 2;
+		printf("\n Stack Overflow");
+		return;
+	}
+	stack[++top] = symbol;
+}
+
+int isEmpty()
+{
+	if(top == -1)
+		return 1;
+	return 0;
+}
+
+long int pop()
+{
+	if(isEmpty())
+	{
+		printf("Stack Underflow");
+		exit(1);
+	}
+	return stack[top--];
+}
+
+int priority(char symbol)
+{
+	switch(symbol)
+	{
+		case '(': 	
+			return 0;
+			break;
 		case '+':
-		case '-': 
+		case '-':   
 			return 1;
+			break;
+		case '*':
+		case '/':
+		case '%':   
+			return 2;
+			break;
+		case '^':   
+			return 3;
+			break;
 		default:
 			return 0;
 	}
 }
 
-void postfixConversion(char infix[])
+void infix_to_postfix()
 {
-	int i = 0, j=0;
+	unsigned int i, p=0;
 	char symbol, next;
 	for(i=0; i<strlen(infix); i++)
 	{
@@ -62,43 +72,63 @@ void postfixConversion(char infix[])
 				push(symbol);
 				break;
 			case ')':
-				while((next = pop()) != ')')
-					postfix[j++] = next;
+				while((next = pop()) != '(')
+					postfix[p++] = next;
 				break;
-			case '^':
-			case '%':
-			case '/':
-			case '*':
 			case '+':
 			case '-':
-				while((top != NULL) && (p(symbol) <= p(top->data)))
-					postfix[j++] = pop();
+			case '*':
+			case '/':
+			case '%':
+			case '^':
+				while(!isEmpty() && (priority(stack[top]) >= priority(symbol)))
+					postfix[p++] = pop();
 				push(symbol);
 				break;
 			default:
-				postfix[j++] = symbol;
+				postfix[p++] = symbol;
 		}
 	}
-	while(top != NULL)
-		postfix[j++] = pop();
-	postfix[j] = '\0';
+	while(!isEmpty())
+		postfix[p++] = pop();
+	postfix[p] = '\0';
 }
-	
+
+long int eval()
+{
+	long int a, b, temp, result;
+	int i=0;
+	for(i=0; i<strlen(postfix); i++)
+	{
+		if(postfix[i] <= '9' && postfix[i] >= '0')
+			push(postfix[i]-'0');
+		else
+		{
+			a = pop();
+			b = pop();
+			switch(postfix[i])
+			{
+				case '+': temp = a+b; break;
+				case '-': temp = b-a; break;
+				case '*': temp = a*b; break;
+				case '/': temp = b/a; break;
+				case '%': temp = b%a; break;
+				case '^': temp = pow(b,a); break;
+			}
+			push(temp);
+		}
+	}
+	result = pop();
+	return temp;
+}
 
 int main()
 {
 	printf("\n Enter the infix expression : \n");
-	fgets(infix, 100, stdin);
-
-	system("clear");
-	printf("\n The entered infix expression is: ");
-	fputs(infix, stdout);
-
-	postfixConversion(infix);
-
-	printf("\n The postfix expression is: ");
-	// fputs(postfix, stdout);
-	printf("%s", postfix);
-	printf("\n");
-	return 0;
+	scanf("%s", infix);
+	infix_to_postfix();
+	printf("The Value of postfix expression is : \n");
+	fputs(postfix,stdout);
+	long int value = eval();
+	printf("\n %ld \n ", value);
 }
