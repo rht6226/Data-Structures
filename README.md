@@ -23,3 +23,4 @@ Please make sure your PRs are mergable.
 
 ## Contributors
 - [Rohit Raj Anand](https://github.com/rht6226)
+- [Nagaraj Rathna](https://github.com/nagaraj28)
