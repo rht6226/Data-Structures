@@ -15,13 +15,18 @@ Please make sure your PRs are mergable.
 - Linked List
 	1. Singly Linked List
 - Stack
+1.Stack Implementation in C++
 - Queue
 	1. Queue
 	2. Circular Queue
 	3. Priority Queue
+	4.Queue Implementation in C++
 - Binary Trees
+-String Manipulation
+1.Anagrams in c++
 
 ## Contributors
 - [Rohit Raj Anand](https://github.com/rht6226)
 - [Ashwini Ojha](https://github.com/ashwini571)
 - [Hemant Upadhyay](https://github.com/hemantupadhyay24)
+
